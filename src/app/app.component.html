@@ -1,17 +1,8 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
 
-  <div class="btn-group" role="group">
-    <button (click)="onWorkType()" type="button" class="btn btn-secondary">Work Type</button>
-    <button (click)="onForms()" type="button" class="btn btn-secondary">Forms</button>
-    <button (click)="onSections()" type="button" class="btn btn-secondary">Sections</button>
-    <button (click)="onSectionToForms()" type="button" class="btn btn-secondary">SectionToForms</button>
-    <button (click)="onFields()" type="button" class="btn btn-secondary">Fields</button>
-    <button (click)="onOptions()" type="button" class="btn btn-secondary">Options</button>
-  </div>
-  <h4>
-    <pre>
-    {{jsonToShow | json}}
-    </pre>
-  </h4>
-  </div>
+
+<nav class="nav nav-pills">
+  <a class="flex-sm-fill text-sm-center nav-link" [routerLink]="['/welcome']">Home</a>
+  <a class="flex-sm-fill text-sm-center nav-link" [routerLink]="['/tool']">Tool</a>
+</nav>
+<router-outlet></router-outlet>
