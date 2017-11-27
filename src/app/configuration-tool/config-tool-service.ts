@@ -139,7 +139,6 @@ export class ConfigToolService implements IConfigToolService {
     constructor() {
 
         this.setAllDataFromExel();
-
     }
 
     getWorkType(): any {
@@ -167,7 +166,7 @@ export class ConfigToolService implements IConfigToolService {
     }
 
     private setAllDataFromExel() {
-        this.getExelFile("../assets/exel9.xlsx");
+        this.getExelFile("../assets/Exelon-config-tool.xlsx");
 
     }
 
@@ -282,34 +281,28 @@ export class ConfigToolService implements IConfigToolService {
 
     private getFormId(name: string, index: number): number {
         switch (name) {
-            case "PipesAndFitting":
+            case "Pipes And Fitting":
                 return 5;
             case "Casing":
                 return 6;
-            case "SqueezeOff":
+            case "Squeeze Off":
                 return 7;
-            case "MaterialList":
-                return 8;
-            case "TieIn":
+            case "Tie In":
                 return 9;
-            case "MarkerBall":
+            case "Marker Ball":
                 return 10;
-            case "SteelPlate":
+            case "Steel Plate":
                 return 11;
-            case "ReferenceLine":
+            case "Reference Line":
                 return 12;
-            case "ReferencePoint":
+            case "Reference Point":
                 return 13;
-            case "ExistingPoint":
+            case "Existing Point":
                 return 14;
-            case "ExistingLine":
+            case "Existing Line":
                 return 15;
             case "RFID":
                 return 16;
-            case "Project":
-                return 17;
-            case "Bore":
-                return 41;
         }
         return index + this.initializeId;
 
@@ -351,7 +344,7 @@ export class ConfigToolService implements IConfigToolService {
                 sectionId: this.getSectionId(i.formName, sheetsNames),
                 editOnly: false,
                 esriName: i.esriPosition,
-                length: 50,
+                length: this.getFieldLength(i.length),
                 mandatory: this.isFieldMandatory(i.isMandatory),
                 readOnly: false,
                 order: parseInt(i.order),
@@ -360,6 +353,14 @@ export class ConfigToolService implements IConfigToolService {
             })
 
         })
+    }
+
+    private getFieldLength(value: string) {
+        try {
+            return isNaN(parseInt(value)) ? 50 : parseInt(value);
+        } catch (exp) {
+            return 50;
+        }
     }
 
     private getGroupId(value: string) {
@@ -425,19 +426,19 @@ export class ConfigToolService implements IConfigToolService {
     private getRawField(rawJson: any): RawField[] {
         var result: RawField[] = [];
         _.forEach(rawJson, (i) => {
-            i = <string>i
-            result.push({
-                formName: i[0],
-                dependency: i[1],
-                order: i[2],
-                name: i[3],
-                type: i[4],
-                optionListName: i[5],
-                length: i[6],
-                isMandatory: i[7],
-                esriPosition: i[8]
-
-            })
+            if (this.isFieldValid(i[0])) {
+                result.push({
+                    formName: i[0],
+                    dependency: i[1],
+                    order: i[2],
+                    name: i[3],
+                    type: i[4],
+                    optionListName: i[5],
+                    length: i[6],
+                    isMandatory: i[7],
+                    esriPosition: i[8] ? i[8] : "Reserved25"
+                })
+            }
         })
         return result;
     }
@@ -484,10 +485,17 @@ export class ConfigToolService implements IConfigToolService {
                 return 10;
             case "selection":
                 return 12;
-            case "list multiselect":
+            case "multiselection":
+                return 13;
+                case "list multiselect":
                 return 13;
             case "multiline text":
                 return 7;
+            case "Comments":
+                return 7;
+            case "statement":
+                return 9;
+
         }
     }
 
