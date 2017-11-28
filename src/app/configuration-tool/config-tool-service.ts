@@ -339,7 +339,7 @@ export class ConfigToolService implements IConfigToolService {
 
             this.fields.push({
                 title: i.name,
-                name: this.getFieldName(i.name),
+                name: this.getFieldName(i.formName, i.name),
                 typeId: this.getfieldType(i.type),
                 sectionId: this.getSectionId(i.formName, sheetsNames),
                 editOnly: false,
@@ -348,7 +348,7 @@ export class ConfigToolService implements IConfigToolService {
                 mandatory: this.isFieldMandatory(i.isMandatory),
                 readOnly: false,
                 order: parseInt(i.order),
-                visibleWhen: this.getFieldDependency(i.dependency)
+                visibleWhen: this.getFieldDependency(i.formName, i.dependency)
 
             })
 
@@ -434,9 +434,9 @@ export class ConfigToolService implements IConfigToolService {
                     name: i[3],
                     type: i[4],
                     optionListName: i[5],
-                    length: i[6],
-                    isMandatory: i[7],
-                    esriPosition: i[8] ? i[8] : "Reserved25"
+                    length: i[7],
+                    isMandatory: i[8],
+                    esriPosition: i[9] ? i[9] : "Reserved25"
                 })
             }
         })
@@ -448,8 +448,9 @@ export class ConfigToolService implements IConfigToolService {
         var result: Options[] = [];
 
         rawJson[0].forEach(element => {
+            var keyName=this.getCamelCaseLetter(element.replace("_",""));
             result.push({
-                key: this.getFieldName(element),
+                key: keyName,
                 options: []
             });
         });
@@ -487,7 +488,7 @@ export class ConfigToolService implements IConfigToolService {
                 return 12;
             case "multiselection":
                 return 13;
-                case "list multiselect":
+            case "list multiselect":
                 return 13;
             case "multiline text":
                 return 7;
@@ -499,13 +500,19 @@ export class ConfigToolService implements IConfigToolService {
         }
     }
 
-    private getFieldName(name: string) {
-        return name
-            .replace(/\s(.)/g, function ($1) { return $1.toUpperCase(); })
-            .replace(/\s/g, '')
-            .replace(/^(.)/, function ($1) { return $1.toLowerCase(); });
+    private getFieldName(formName: string, name: string) {
+        var finalName = formName + name;
+        return this.getCamelCaseLetter(finalName);
     }
 
+    private getCamelCaseLetter(val:string){
+        return val
+        .replace(/\s(.)/g, function ($1) { return $1.toUpperCase(); })
+        .replace(/\s/g, '')
+        .replace(/^(.)/, function ($1) { return $1.toLowerCase(); });
+        
+    }
+    
     private getFormDependency(formName: string): VisibleWhen {
 
         var dependencyIds: number[] = [];
@@ -556,10 +563,10 @@ export class ConfigToolService implements IConfigToolService {
         }
     }
 
-    private getFieldDependency(val: string): VisibleWhen {
-        if (this.isFieldValid(val) && val.length > 0) {
-            var splitVal = val.split("=");
-            var dependencyName = this.getFieldName(splitVal[0]);
+    private getFieldDependency(formName: string, name: string): VisibleWhen {
+        if (this.isFieldValid(name) && name.length > 0) {
+            var splitVal = name.split("=");
+            var dependencyName = this.getFieldName(formName, splitVal[0]);
             var dependencyValue = [splitVal[1]];
             return {
                 isOn: null,
