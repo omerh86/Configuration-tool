@@ -131,10 +131,8 @@ export class ConfigToolService implements IConfigToolService {
     private fields: Field[] = [];
     private options: Options[] = [];
 
-
-
     private initializeId = 1001;
-
+    private EXEL_FILE_NAME="Pge-Rnd"
 
     constructor() {
 
@@ -166,7 +164,7 @@ export class ConfigToolService implements IConfigToolService {
     }
 
     private setAllDataFromExel() {
-        this.getExelFile("../assets/Exelon-config-tool.xlsx");
+        this.getExelFile(`../assets/${this.EXEL_FILE_NAME}.xlsx`);
 
     }
 
@@ -367,6 +365,10 @@ export class ConfigToolService implements IConfigToolService {
         switch (value) {
             case "mapping":
                 return 11;
+                case "mapping-line":
+                return 12;
+                case "mapping-point":
+                return 13;
             case "forms":
                 return 22;
             case "l1":
@@ -377,6 +379,8 @@ export class ConfigToolService implements IConfigToolService {
     private getmoduleId(value: string) {
         switch (value) {
             case "mapping":
+            case "mapping-line":
+            case "mapping-point":
                 return 1;
             case "forms":
                 return 4;
@@ -448,7 +452,7 @@ export class ConfigToolService implements IConfigToolService {
         var result: Options[] = [];
 
         rawJson[0].forEach(element => {
-            var keyName=this.getCamelCaseLetter(element.replace("_",""));
+            var keyName = this.getCamelCaseLetter(element.replace("_", ""));
             result.push({
                 key: keyName,
                 options: []
@@ -505,14 +509,14 @@ export class ConfigToolService implements IConfigToolService {
         return this.getCamelCaseLetter(finalName);
     }
 
-    private getCamelCaseLetter(val:string){
+    private getCamelCaseLetter(val: string) {
         return val
-        .replace(/\s(.)/g, function ($1) { return $1.toUpperCase(); })
-        .replace(/\s/g, '')
-        .replace(/^(.)/, function ($1) { return $1.toLowerCase(); });
-        
+            .replace(/\s(.)/g, function ($1) { return $1.toUpperCase(); })
+            .replace(/\s/g, '')
+            .replace(/^(.)/, function ($1) { return $1.toLowerCase(); });
+
     }
-    
+
     private getFormDependency(formName: string): VisibleWhen {
 
         var dependencyIds: number[] = [];
